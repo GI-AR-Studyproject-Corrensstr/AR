@@ -7,9 +7,9 @@
     <a-scene embedded arjs renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector id="scene">
       <a-marker type="pattern" preset="custom" url="/pattern/ifgi-pattern.patt" id="a-marker">
         <a-entity
-          position="0 0 0"
+          position="0 0.5 0"
           scale="0.8 0.8 0.8"
-          gltf-model="/gltf/car_model/scene.gltf"
+          gltf-model=""
           class="clickable"
           gesture-handler="minScale: 0.25; maxScale: 10"
           id="a-entity"
@@ -18,5 +18,5 @@
       <a-entity camera id="camera"></a-entity>
     </a-scene>
   </body>
-  <script src="js/main.js"></script>
+  <script src="js/ar.js"></script>
 </html>
