@@ -12,6 +12,7 @@ sceneEl.addEventListener("markerLost", (e) => {
     isMarkerVisible = false;
 });
 
+//rotate object when touched with one finger
 sceneEl.addEventListener('onefingermove', (e) => {
     if (isMarkerVisible) {
         el.object3D.rotation.y +=
@@ -21,7 +22,7 @@ sceneEl.addEventListener('onefingermove', (e) => {
             e.detail.positionChange.y * rotationFactor;
     }
 })
-
+//zoom in/out when touched with two fingers
 sceneEl.addEventListener('twofingermove', (e) => {
     if (isMarkerVisible) {
         this.scaleFactor *=

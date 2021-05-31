@@ -6,10 +6,14 @@ const app = express()
 const PORT = 3000
 
 app.use('/aframe', express.static(__dirname + '/node_modules/aframe/dist/'))
+app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'))
+app.use('/popperjs', express.static(__dirname + '/node_modules/@popperjs/core/dist/umd/'))
+app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'))
 app.use('/gltf', express.static(__dirname + '/public/gltf'))
 app.use('/pattern', express.static(__dirname + '/public/pattern'))
 app.use('/js', express.static(__dirname + '/public/js'))
 app.use('/css', express.static(__dirname + '/public/css'))
+app.use('/img', express.static(__dirname + '/public/img'))
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/html/index.html')
