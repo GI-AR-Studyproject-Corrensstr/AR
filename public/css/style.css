@@ -5,7 +5,7 @@ div.Introduction {
   div.script {
     text-align: left;
   }
-  th{
+  th {
     background-color: forestgreen;
     color: white;
     max-width: 100%;
@@ -27,8 +27,4 @@ div.Introduction {
     color: black;
     padding-top: 20px;
   }
-  ansicht{ /*used only in index_Login.html */
-    color: #2E8B57;
-    font-weight: bold;
-    font-family: arial, sans-serif;
-  }
+  body { padding-top: 70px; }

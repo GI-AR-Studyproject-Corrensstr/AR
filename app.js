@@ -1,10 +1,13 @@
 const express = require('express')
-var fs = require('fs')
-var https = require('https')
+const fs = require('fs')
+const https = require('https')
+
 const app = express()
 
 const PORT = 3000
 
+app.use('/three-module', express.static(__dirname + '/node_modules/three/build/three.module.js'))
+app.use('/aframe', express.static(__dirname + '/node_modules/aframe/dist/'))
 app.use('/aframe', express.static(__dirname + '/node_modules/aframe/dist/'))
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'))
 app.use('/popperjs', express.static(__dirname + '/node_modules/@popperjs/core/dist/umd/'))
