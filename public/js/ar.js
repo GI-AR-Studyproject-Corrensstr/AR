@@ -5,22 +5,31 @@ var rotationFactor = 5;
 
 let isMarkerVisible;
 
+// listener for marker event
 sceneEl.addEventListener("markerFound", (e) => {
     isMarkerVisible = true;
+    //get marker id
     let markerName = e.target.attributes.id.nodeValue;
-    console.log(markerName);
-    console.log(camera);
-    console.log(camera.getAttribute("gps-camera").simulateLatitude);
-    camera.setAttribute("gps-camera", "51.99");
-    console.log(camera.getAttribute("gps-camera").simulateLatitude);
+    // marker-id and simulated camera coordinates
+    console.log(markerName, camera.getAttribute("gps-projected-camera"));
+    if(markerName == 'ifgi-marker' & camera.getAttribute("gps-projected-camera").simulateLatitude != 51.96921096587609 & camera.getAttribute("gps-projected-camera").simulateLongitude != 7.595987023161684) {
+        //go to page with the right simulated location
+        window.location.replace("https://10.67.72.153:3000/location1");
+    }
+    else {
+        //otherwise stay here
+        console.log("still the same");
+    }
 });
 
+//listener for marker event
 sceneEl.addEventListener("markerLost", (e) => {
     isMarkerVisible = false;
 });
 
 //rotate object when touched with one finger
 sceneEl.addEventListener('onefingermove', (e) => {
+    // control if marker is in fov
     if (isMarkerVisible) {
         el.object3D.rotation.y +=
             e.detail.positionChange.x * rotationFactor;

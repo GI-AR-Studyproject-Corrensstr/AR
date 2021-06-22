@@ -3,17 +3,19 @@
 <script src="aframe/aframe.js"></script>
 <script src="js/aframe-ar.js"></script>
 <script src="js/gestures.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.4/proj4.js"></script>
 
 <body style="margin : 0px; overflow: hidden;">
   <a-scene embedded arjs renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector
     id="scene">
     <a-marker type="pattern" preset="custom" url="pattern/ifgi-pattern.patt" id="ifgi-marker">
     </a-marker>
-    <a-entity position="0 -3.5 0" scale="0.5 0.5 0.5" gps-projected-entity-place="latitude: 51.969441157109046; longitude: 7.595743346967056;"
+    <a-entity position="0 -1.6 0" scale="0.5 0.5 0.5" gps-projected-entity-place="latitude: 51.96600541198176; longitude: 7.6206077615092696;"
       gltf-model="/gltf/truck_model/scene.gltf">
     </a-entity>
-    <a-camera gps-projected-camera="simulateLatitude: 51.9693692750505; simulateLongitude: 7.595715183772788; simulateAltitude: 65.5" rotation-reader id="camera">
+    <a-entity position="0 -1.6 0" scale="10 10 10">
+      <a-img src="img/baum.jpg"></a-img>
+    </a-entity>
+    <a-camera gps-projected-camera="simulateLatitude: 51.965917513756644; simulateLongitude: 7.620471707295602;" rotation-reader id="camera">
   </a-scene>
 </body>
 <script src="js/ar.js"></script>
