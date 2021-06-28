@@ -3,7 +3,6 @@
 <script src="aframe/aframe.js"></script>
 <script src="js/aframe-ar.js"></script>
 <script src="js/gestures.js"></script>
-
 <body style="margin : 0px; overflow: hidden;">
   <a-scene embedded arjs renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector
     id="scene">
@@ -12,12 +11,8 @@
     <a-entity position="0 -1.6 0" scale="0.5 0.5 0.5" gps-projected-entity-place="latitude: 51.969084763231166; longitude: 7.595625947207075;"
       gltf-model="/gltf/truck_model/scene.gltf">
     </a-entity>
-    <a-entity position="0 -1.6 0" scale="10 10 10">
-      <a-img src="img/baum.jpg"></a-img>
-    </a-entity>
     <a-camera gps-projected-camera="simulateLatitude: 51.96921096587609; simulateLongitude: 7.595987023161684;" rotation-reader id="camera">
   </a-scene>
 </body>
 <script src="js/ar.js"></script>
-
 </html>
