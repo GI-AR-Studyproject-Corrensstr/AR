@@ -26,14 +26,6 @@ app.get('/ar', function (req, res) {
     res.sendFile(__dirname + '/public/html/ar.html')
 })
 
-app.get('/location1', function (req, res) {
-    res.sendFile(__dirname + '/public/html/markerLocation1.html')
-})
-
-app.get('/location2', function (req, res) {
-    res.sendFile(__dirname + '/public/html/markerLocation2.html')
-})
-
 https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert')

@@ -4,18 +4,18 @@
 <script src="js/aframe-ar.js"></script>
 <script src="js/gestures.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.4/proj4.js"></script>
+<script src="/jquery/jquery.js"></script>
+<script src="js/ar.js"></script>
 
 <body style="margin : 0px; overflow: hidden;">
-  <a-scene embedded arjs renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector
-    id="scene">
-    <a-marker type="pattern" preset="custom" url="pattern/ifgi-pattern.patt" id="ifgi-marker">
-    </a-marker>
-    <a-entity position="0 -3.5 0" scale="0.5 0.5 0.5" gps-projected-entity-place="latitude: 51.969441157109046; longitude: 7.595743346967056;"
-      gltf-model="/gltf/truck_model/scene.gltf">
-    </a-entity>
-    <a-camera gps-projected-camera="simulateLatitude: 51.9693692750505; simulateLongitude: 7.595715183772788; simulateAltitude: 65.5" rotation-reader id="camera">
+  <a-scene embedded arjs gesture-detector id="scene">
+    <!-- <a-marker type="pattern" preset="custom" url="/pattern/ifgi-pattern.patt" id="ifgi-marker" size="">
+      <a-entity position="0 0 0">
+        <a-image src="/img/gartenlaube.jpg"></a-inage>
+      </a-entity>
+    </a-marker> -->
+    <a-entity camera id="camera"></a-entity>
   </a-scene>
 </body>
-<script src="js/ar.js"></script>
 
 </html>
