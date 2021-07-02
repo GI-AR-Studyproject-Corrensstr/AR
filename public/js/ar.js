@@ -1,47 +1,135 @@
-const sceneEl = document.getElementById('scene');
-const camera = document.getElementById('camera');
-const el = document.getElementById('a-entity')
+var sceneEl;
+var camera;
+var el;
 var rotationFactor = 5;
 
-let isMarkerVisible;
+$(document).ready((e) => {
+    sceneEl = document.querySelector('a-scene');
+    camera = document.querySelector('a-camera');
 
-// listener for marker event
-sceneEl.addEventListener("markerFound", (e) => {
-    isMarkerVisible = true;
-    //get marker id
-    let markerName = e.target.attributes.id.nodeValue;
-    // marker-id and simulated camera coordinates
-    console.log(markerName, camera.getAttribute("gps-projected-camera"));
-    if(markerName == 'ifgi-marker' & camera.getAttribute("gps-projected-camera").simulateLatitude != 51.96921096587609 & camera.getAttribute("gps-projected-camera").simulateLongitude != 7.595987023161684) {
-        //go to page with the right simulated location
-        window.location.replace("https://10.67.72.153:3000/location1");
-    }
-    else {
-        //otherwise stay here
-        console.log("still the same");
-    }
-});
+    console.log(sceneEl);
 
-//listener for marker event
-sceneEl.addEventListener("markerLost", (e) => {
-    isMarkerVisible = false;
-});
+    let isMarkerVisible = false;
 
-//rotate object when touched with one finger
-sceneEl.addEventListener('onefingermove', (e) => {
-    // control if marker is in fov
-    if (isMarkerVisible) {
-        el.object3D.rotation.y +=
-            e.detail.positionChange.x * rotationFactor;
+    // listener for marker event
+    sceneEl.addEventListener("markerFound", (e) => {
+        isMarkerVisible = true;
+        //get marker id
+        let markerName = e.target.attributes.id.nodeValue;
+        console.log("marker found", markerName);
+    });
 
-        el.object3D.rotation.x +=
-            e.detail.positionChange.y * rotationFactor;
-    }
+    //listener for marker event
+    sceneEl.addEventListener("markerLost", (e) => {
+        isMarkerVisible = false;
+        console.log("marker lost");
+    });
+
+    //rotate object when touched with one finger
+    sceneEl.addEventListener('onefingermove', (e) => {
+
+        //TODO Dynamisch Elemente suchen
+        el = document.querySelector('#gartenlaube');
+        // control if marker is in fov
+        if (isMarkerVisible) {
+            el.object3D.rotation.y +=
+                e.detail.positionChange.x * rotationFactor;
+
+            el.object3D.rotation.x +=
+                e.detail.positionChange.y * rotationFactor;
+        }
+    })
+
+    //zoom in/out when touched with two fingers
+    sceneEl.addEventListener('twofingermove', (e) => {
+        el = document.querySelector('#a-entity');
+        if (isMarkerVisible) {
+            this.scaleFactor *=
+                1 + e.detail.spreadChange / e.detail.startSpread;
+        }
+    })
+
+    appendMarkerToScene('ifgi-marker', 'pattern/ifgi-pattern.patt')
+    //appendObjectToScene("gltf", "gartenlaube", "0 0 0", "0.3 0.3 0.3", "/gltf/truck_model/scene.gltf", "ifgi-marker")
+    appendObjectToScene('image', 'gartenlaube', '0 0 0', '2 2 2', '/img/gartenlaube.jpg', 'ifgi-marker');
 })
-//zoom in/out when touched with two fingers
-sceneEl.addEventListener('twofingermove', (e) => {
-    if (isMarkerVisible) {
-        this.scaleFactor *=
-            1 + e.detail.spreadChange / e.detail.startSpread;
+
+// AFRAME.registerComponent('log', {  
+//     init: function () {  
+//        console.log(this.el);  // Reference to the scene element.
+//     }  
+// });
+
+
+
+//function that adds a marker to the scene
+function appendMarkerToScene(id, url, position) {
+    const scene = document.querySelector('a-scene');
+    var marker = document.createElement('a-marker');
+
+    marker.setAttribute('type', 'pattern');
+    marker.setAttribute('preset', 'custom');
+    marker.setAttribute('url', url);
+    marker.setAttribute('id', id);
+    console.log(marker);
+    scene.appendChild(marker);
+}
+
+
+
+// function that adds an oject to the scene
+function appendObjectToScene(type, id, position, scale, src, markerid) {
+    // get marker for object
+    const marker = document.getElementById(markerid);
+    var entity;
+    switch(type) {
+        case "gltf":
+            //generate new gltf object and set path
+            entity = document.createElement('a-gltf-model');
+            var gltfmodel = document.createAttribute('gltf-model');
+            gltfmodel.value = src;
+            entity.setAttributeNode(gltfmodel);
+            break;
+        case "image":
+            //generate new image object and set path
+            entity = document.createElement('a-image');
+            var imagesrc = document.createAttribute('src');
+            imagesrc.value = src;
+            entity.setAttributeNode(imagesrc);
+            //set rotation of image
+            var rotationAttr = document.createAttribute('rotation');
+            rotationAttr.value = "90 0 180";
+            entity.setAttributeNode(rotationAttr);
+            break;
     }
-})
+
+    //set id
+    entity.setAttribute('id', id);
+    //set position
+    var positionAttr = document.createAttribute('position');
+    positionAttr.value = position;
+    entity.setAttributeNode(positionAttr);
+    //set scale
+    var scaleAttr = document.createAttribute('scale');
+    scaleAttr.value = scale;
+    entity.setAttributeNode(scaleAttr);
+
+    console.log(entity);
+    marker.appendChild(entity);
+}
+
+//example marker1
+var marker1 = {
+    "name": "Mustermarker",
+    "path": "/kdfjh/jdfhxb.patt",
+    "position": "X Y Z"
+}
+//example object1
+var object1 = {
+    "type": "gltf",
+    "name": "Musterobjekt",
+    "position": "0 0 0",
+    "scale": "1 1 1",
+    "path": "/dgvdx/sjfh.gltf",
+    "marker": "markerId"
+}
