@@ -29,7 +29,7 @@ $(document).ready((e) => {
     sceneEl.addEventListener('onefingermove', (e) => {
 
         //TODO Dynamisch Elemente suchen
-        el = document.querySelector('#gartenlaube');
+        el = document.querySelector('a-image');
         // control if marker is in fov
         if (isMarkerVisible) {
             el.object3D.rotation.y +=
@@ -42,7 +42,8 @@ $(document).ready((e) => {
 
     //zoom in/out when touched with two fingers
     sceneEl.addEventListener('twofingermove', (e) => {
-        el = document.querySelector('#a-entity');
+        console.log("twofingermove");
+        el = document.querySelector('a-image');
         if (isMarkerVisible) {
             this.scaleFactor *=
                 1 + e.detail.spreadChange / e.detail.startSpread;
@@ -109,6 +110,9 @@ function appendObjectToScene(type, id, position, scale, src, markerid) {
     var positionAttr = document.createAttribute('position');
     positionAttr.value = position;
     entity.setAttributeNode(positionAttr);
+    // activate gesture-handler
+    var gesturehandler = document.createAttribute('gesture-handler');
+    entity.setAttributeNode(gesturehandler);
     //set scale
     var scaleAttr = document.createAttribute('scale');
     scaleAttr.value = scale;
@@ -126,10 +130,10 @@ var marker1 = {
 }
 //example object1
 var object1 = {
-    "type": "gltf",
-    "name": "Musterobjekt",
-    "position": "0 0 0",
-    "scale": "1 1 1",
-    "path": "/dgvdx/sjfh.gltf",
-    "marker": "markerId"
+    type: "gltf",
+    name: "element",
+    position: "0 0 0",
+    scale: "1 1 1",
+    path: "/dgvdx/sjfh.gltf",
+    marker: "markerId"
 }
