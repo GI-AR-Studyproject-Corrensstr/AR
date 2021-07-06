@@ -4,7 +4,7 @@ const https = require('https')
 
 const app = express()
 
-const PORT = 3000
+const PORT = 4200
 
 app.use('/three-module', express.static(__dirname + '/node_modules/three/build/three.module.js'))
 app.use('/aframe', express.static(__dirname + '/node_modules/aframe/dist/'))
@@ -30,6 +30,6 @@ https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert')
 }, app)
-    .listen(3000, function () {
-        console.log('Example app listening on port 3000! Go to https://localhost:3000/')
+    .listen(4200, function () {
+        console.log('Example app listening on port 4200! Go to https://localhost:4200/')
     })
