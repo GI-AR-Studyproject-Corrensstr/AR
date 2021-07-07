@@ -83,7 +83,7 @@ function appendObjectToScene(type, id, position, scale, src, markerid) {
     // get marker for object
     const marker = document.getElementById(markerid);
     var entity;
-    switch(type) {
+    switch (type) {
         case "gltf":
             //generate new gltf object and set path
             entity = document.createElement('a-gltf-model');
@@ -136,4 +136,11 @@ var object1 = {
     scale: "1 1 1",
     path: "/dgvdx/sjfh.gltf",
     marker: "markerId"
+}
+
+var template = {
+    name: String,
+    type: String,
+    position: String,
+    path: String
 }
