@@ -4,11 +4,14 @@ var el;
 var rotationFactor = 5;
 
 $(document).ready((e) => {
+
+    //get camera and scene element
     sceneEl = document.querySelector('a-scene');
     camera = document.querySelector('a-camera');
 
-    console.log(sceneEl);
+    //console.log(sceneEl);
 
+    //marker not visible at beginning
     let isMarkerVisible = false;
 
     // listener for marker event
@@ -17,6 +20,7 @@ $(document).ready((e) => {
         //get marker id
         let markerName = e.target.attributes.id.nodeValue;
         console.log("marker found", markerName);
+        console.log(sceneEl);
     });
 
     //listener for marker event
@@ -51,18 +55,79 @@ $(document).ready((e) => {
     })
 
     appendMarkerToScene('ifgi-marker', 'pattern/ifgi-pattern.patt')
-    //appendObjectToScene("gltf", "gartenlaube", "0 0 0", "0.3 0.3 0.3", "/gltf/truck_model/scene.gltf", "ifgi-marker")
-    appendObjectToScene('image', 'gartenlaube', '0 0 0', '2 2 2', '/img/gartenlaube.jpg', 'ifgi-marker');
+    getAllAssets();
+    // getAssetById(53);
+    //getAllMarkers();
+    getMarkerById(18)
 })
 
-// AFRAME.registerComponent('log', {  
-//     init: function () {  
-//        console.log(this.el);  // Reference to the scene element.
-//     }  
-// });
+
+// ++++++ ASSET FUNCTIONS +++++
+function getAllAssets() {
+    $.ajax({
+        url: "https://giv-project10:3001/asset",
+        type: 'GET',
+        dataType: 'json', // added data type
+        success: function (res) {
+            for (let index = 0; index < res.data.length; index++) {
+                console.log(res.data[index]);
+                appendObjectToScene(res.data[index]);
+            }
+        }
+    });
+}
+
+function getAssetById(ID) {
+    $.ajax({
+        url: "https://giv-project10:3001/asset/" + ID,
+        type: 'GET',
+        dataType: 'json', // added data type
+        success: function (res) {
+            console.log(res);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+}
+
+// ++++++ MARKER FUNCTIONS +++++
+function getAllMarkers() {
+    $.ajax({
+        url: "https://giv-project10:3001/marker",
+        type: 'GET',
+        dataType: 'json', // added data type
+        success: function (res) {
+            console.log(res);
+            // for (let index = 0; index < res.data.length; index++) {
+            //     console.log(res.data[index]);
+            // }
+        }
+    });
+}
+
+function getMarkerById(ID) {
+    $.ajax({
+        url: "https://giv-project10:3001/marker/" + ID,
+        type: 'GET',
+        dataType: 'json', // added data type
+        success: function (res) {
+            console.log(res);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+}
 
 
+// TODO
+function getCloseAssets(markerID) {
 
+}
+
+
+// +++++++ ADD ELEMENTS TO SCENE +++++++++
 //function that adds a marker to the scene
 function appendMarkerToScene(id, url, position) {
     const scene = document.querySelector('a-scene');
@@ -72,54 +137,70 @@ function appendMarkerToScene(id, url, position) {
     marker.setAttribute('preset', 'custom');
     marker.setAttribute('url', url);
     marker.setAttribute('id', id);
-    console.log(marker);
     scene.appendChild(marker);
 }
 
 
 
 // function that adds an oject to the scene
-function appendObjectToScene(type, id, position, scale, src, markerid) {
+function appendObjectToScene(object) {
     // get marker for object
-    const marker = document.getElementById(markerid);
+    const marker = document.getElementById("ifgi-marker");
     var entity;
-    switch (type) {
-        case "gltf":
+    switch (object.type) {
+        case "3D_asset":
             //generate new gltf object and set path
             entity = document.createElement('a-gltf-model');
             var gltfmodel = document.createAttribute('gltf-model');
-            gltfmodel.value = src;
+            gltfmodel.value = "/gltf/default_objects/tree_small.glb";
             entity.setAttributeNode(gltfmodel);
+
+            //set id
+            entity.setAttribute('id', object.name);
+            //set position
+            var positionAttr = document.createAttribute('position');
+            positionAttr.value = "0 1 0";
+            entity.setAttributeNode(positionAttr);
+            // activate gesture-handler
+            var gesturehandler = document.createAttribute('gesture-handler');
+            entity.setAttributeNode(gesturehandler);
+            //set scale
+            var scaleAttr = document.createAttribute('scale');
+            scaleAttr.value = "1 1 1";
+            entity.setAttributeNode(scaleAttr);
+
+            console.log(entity);
+            marker.appendChild(entity);
             break;
         case "image":
             //generate new image object and set path
             entity = document.createElement('a-image');
             var imagesrc = document.createAttribute('src');
-            imagesrc.value = src;
+            imagesrc.value = "/img/gartenlaube.jpg";
             entity.setAttributeNode(imagesrc);
             //set rotation of image
             var rotationAttr = document.createAttribute('rotation');
             rotationAttr.value = "90 0 180";
             entity.setAttributeNode(rotationAttr);
+
+            //set id
+            entity.setAttribute('id', object.name);
+            //set position
+            var positionAttr = document.createAttribute('position');
+            positionAttr.value = "1 1 0";
+            entity.setAttributeNode(positionAttr);
+            // activate gesture-handler
+            var gesturehandler = document.createAttribute('gesture-handler');
+            entity.setAttributeNode(gesturehandler);
+            //set scale
+            var scaleAttr = document.createAttribute('scale');
+            scaleAttr.value = "1 1 1";
+            entity.setAttributeNode(scaleAttr);
+
+            console.log(entity);
+            marker.appendChild(entity);
             break;
     }
-
-    //set id
-    entity.setAttribute('id', id);
-    //set position
-    var positionAttr = document.createAttribute('position');
-    positionAttr.value = position;
-    entity.setAttributeNode(positionAttr);
-    // activate gesture-handler
-    var gesturehandler = document.createAttribute('gesture-handler');
-    entity.setAttributeNode(gesturehandler);
-    //set scale
-    var scaleAttr = document.createAttribute('scale');
-    scaleAttr.value = scale;
-    entity.setAttributeNode(scaleAttr);
-
-    console.log(entity);
-    marker.appendChild(entity);
 }
 
 //example marker1
@@ -133,8 +214,6 @@ var object1 = {
     type: "gltf",
     name: "element",
     position: "0 0 0",
-    scale: "1 1 1",
-    path: "/dgvdx/sjfh.gltf",
     marker: "markerId"
 }
 

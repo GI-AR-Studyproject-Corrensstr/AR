@@ -48,14 +48,14 @@ function multiplyMatrices(m1, m2) {
 function CalculateCoordinatesOfGPS(matrix) {
     var inverse = math.inv(matrix);
     var abbildung = multiplyMatrices(kartMatrix, inverse);
-    console.log(abbildung);
+    //console.log(abbildung);
     calculatePoint(abbildung, testPoint);
 }
 
 CalculateCoordinatesOfGPS(GPSmatrix);
 
 function calculatePoint(abbildung, point) {
-    console.log("Abbildung: ", abbildung);
+    //console.log("Abbildung: ", abbildung);
     var kartPoint = math.multiply(abbildung, point);
-    console.log("KartPoint: ", kartPoint);
+    //console.log("KartPoint: ", kartPoint);
 }
