@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <link rel="stylesheet" href="bulma/bulma.css">
+  <link rel="stylesheet" href="fontawesome/css/all.min.css">
+  <script src="/jquery/jquery.js"></script>
+  <script src="aframe/aframe.min.js"></script>
+  <script src="js/aframe-ar.js"></script>
+  <link rel="stylesheet" href="css/ar.css">
+  <body style="margin : 0px; overflow: hidden;">
+    <script src="js/ar.js"></script>
+    <div class="buttons">
+      <div class="surround">
+        <button id="prevbtn" class="button is-transparent"><i class="fas fa-arrow-alt-circle-left fa-3x"></i></button>
+      </div>
+      <div class="surround">
+        <button id="nextbtn" class="button"><i class="fas fa-arrow-alt-circle-right fa-3x"></i></button>
+      </div>
+    </div>
+    <a-scene embedded arjs vr-mode-ui="enabled: false">
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>

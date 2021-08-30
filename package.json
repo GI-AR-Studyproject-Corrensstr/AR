@@ -10,9 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
     "@popperjs/core": "^2.9.2",
     "aframe": "^1.2.0",
-    "bootstrap": "^5.0.1",
+    "bulma": "^0.9.3",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",

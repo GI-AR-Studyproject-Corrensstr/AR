@@ -5,11 +5,22 @@ var rotationFactor = 5;
 
 $(document).ready((e) => {
 
+    // action when prev button is clicked
+    document
+        .querySelector("#prevbtn")
+        .addEventListener("click", function () {
+            alert("Prev");
+        });
+    // action when next button is clicked
+    document
+        .querySelector("#nextbtn")
+        .addEventListener("click", function () {
+            alert("Next");
+        });
+
     //get camera and scene element
     sceneEl = document.querySelector('a-scene');
     camera = document.querySelector('a-camera');
-
-    //console.log(sceneEl);
 
     //marker not visible at beginning
     let isMarkerVisible = false;
@@ -31,8 +42,6 @@ $(document).ready((e) => {
 
     //rotate object when touched with one finger
     sceneEl.addEventListener('onefingermove', (e) => {
-
-        //TODO Dynamisch Elemente suchen
         el = document.querySelector('a-image');
         // control if marker is in fov
         if (isMarkerVisible) {
@@ -53,12 +62,8 @@ $(document).ready((e) => {
                 1 + e.detail.spreadChange / e.detail.startSpread;
         }
     })
-
-    appendMarkerToScene('ifgi-marker', 'pattern/ifgi-pattern.patt')
-    getAllAssets();
-    // getAssetById(53);
-    //getAllMarkers();
-    getMarkerById(18)
+    appendMarkerToScene('ifgi-marker', 'pattern/ifgi-pattern.patt');
+    appendImagetoMarker(asset1, 'ifgi-marker');
 })
 
 
@@ -121,12 +126,6 @@ function getMarkerById(ID) {
 }
 
 
-// TODO
-function getCloseAssets(markerID) {
-
-}
-
-
 // +++++++ ADD ELEMENTS TO SCENE +++++++++
 //function that adds a marker to the scene
 function appendMarkerToScene(id, url, position) {
@@ -138,6 +137,36 @@ function appendMarkerToScene(id, url, position) {
     marker.setAttribute('url', url);
     marker.setAttribute('id', id);
     scene.appendChild(marker);
+}
+
+function appendImagetoMarker(image, markerID) {
+    // get marker to append image
+    const marker = document.getElementById(markerID);
+    //generate new image object and set path
+    var entity = document.createElement('a-image');
+    var imagesrc = document.createAttribute('src');
+    imagesrc.value = image.filepath;
+    entity.setAttributeNode(imagesrc);
+    //set rotation of image
+    var rotationAttr = document.createAttribute('rotation');
+    rotationAttr.value = "90 0 180";
+    entity.setAttributeNode(rotationAttr);
+    //set id
+    entity.setAttribute('id', image.name);
+    //set position
+    var positionAttr = document.createAttribute('position');
+    positionAttr.value = "0 0 0";
+    entity.setAttributeNode(positionAttr);
+    // activate gesture-handler
+    var gesturehandler = document.createAttribute('gesture-handler');
+    entity.setAttributeNode(gesturehandler);
+    //set scale
+    var scaleAttr = document.createAttribute('scale');
+    scaleAttr.value = "1 1 1";
+    entity.setAttributeNode(scaleAttr);
+    marker.appendChild(entity);
+
+    console.log(entity);
 }
 
 
@@ -152,7 +181,7 @@ function appendObjectToScene(object) {
             //generate new gltf object and set path
             entity = document.createElement('a-gltf-model');
             var gltfmodel = document.createAttribute('gltf-model');
-            gltfmodel.value = "/gltf/default_objects/tree_small.glb";
+            //gltfmodel.value = "/gltf/default_objects/tree_small.glb";
             entity.setAttributeNode(gltfmodel);
 
             //set id
@@ -176,7 +205,7 @@ function appendObjectToScene(object) {
             //generate new image object and set path
             entity = document.createElement('a-image');
             var imagesrc = document.createAttribute('src');
-            imagesrc.value = "/img/gartenlaube.jpg";
+            //imagesrc.value = "/img/gartenlaube.jpg";
             entity.setAttributeNode(imagesrc);
             //set rotation of image
             var rotationAttr = document.createAttribute('rotation');
@@ -203,23 +232,26 @@ function appendObjectToScene(object) {
     }
 }
 
-//example marker1
-var marker1 = {
-    "name": "Mustermarker",
-    "path": "/kdfjh/jdfhxb.patt",
-    "position": "X Y Z"
-}
-//example object1
-var object1 = {
-    type: "gltf",
-    name: "element",
-    position: "0 0 0",
-    marker: "markerId"
+var suggestion1 = {
+    "name": "test1",
+    "marker": "ifgi-marker",
+    "asset_id": 1
 }
 
-var template = {
-    name: String,
-    type: String,
-    position: String,
-    path: String
+var suggestion2 = {
+    "name": "test2",
+    "marker": "ifgi-marker",
+    "asset_id": 2
+}
+
+var asset1 = {
+    "id": 1,
+    "name": "xyz",
+    "filepath": "/img/uploads/asset1.jpg"
+}
+
+var asset2 = {
+    "id": 2,
+    "name": "xyz",
+    "filepath": "/img/asset2.png"
 }
