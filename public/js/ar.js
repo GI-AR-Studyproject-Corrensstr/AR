@@ -17,7 +17,7 @@ $(document).ready((e) => {
         isMarkerVisible = true;
         //get marker id
         let markerName = e.target.attributes.id.nodeValue;
-        [].forEach.call(document.querySelectorAll('.surround'), function (el) {
+        [].forEach.call(document.querySelectorAll('.surroundbottom, .surroundtop'), function (el) {
             el.style.visibility = 'visible';
         });
         // action when prev button is clicked
@@ -36,13 +36,19 @@ $(document).ready((e) => {
                 marker.innerHTML = "";
                 appendImagetoMarker(asset2, markerName);
             });
+        document
+            .querySelector("#commentbtn")
+            .addEventListener("click", function () {
+                //TODO grap current asset id
+                alert('Forward to comment site');
+            });
     });
 
     //listener for marker event
     sceneEl.addEventListener("markerLost", (e) => {
         isMarkerVisible = false;
         console.log("marker lost");
-        [].forEach.call(document.querySelectorAll('.surround'), function (el) {
+        [].forEach.call(document.querySelectorAll('.surroundtop, .surroundbottom'), function (el) {
             el.style.visibility = 'hidden';
         });
     });

@@ -6,7 +6,6 @@ const app = express()
 
 const PORT = 4200
 
-app.use('/bulma', express.static(__dirname + '/node_modules/bulma/css/'))
 app.use('/fontawesome', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free/'))
 app.use('/three-module', express.static(__dirname + '/node_modules/three/build/three.module.js'))
 app.use('/aframe', express.static(__dirname + '/node_modules/aframe/dist/'))
