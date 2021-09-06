@@ -2,6 +2,8 @@ var sceneEl;
 var camera;
 var el;
 var rotationFactor = 5;
+var currentSuggestionIndex = 0;
+var currentSuggestions;
 
 $(document).ready((e) => {
 
@@ -16,37 +18,48 @@ $(document).ready((e) => {
     sceneEl.addEventListener("markerFound", (e) => {
         isMarkerVisible = true;
         //get marker id
-        let markerName = e.target.attributes.id.nodeValue;
+        let markerID = e.target.attributes.id.nodeValue;
+        const marker = document.getElementById(markerID);
         [].forEach.call(document.querySelectorAll('.surroundbottom, .surroundtop'), function (el) {
             el.style.visibility = 'visible';
         });
+        getMarkerSuggestions(markerID);
         // action when prev button is clicked
         document
             .querySelector("#prevbtn")
             .addEventListener("click", function () {
-                const marker = document.getElementById(markerName);
                 marker.innerHTML = "";
-                appendImagetoMarker(asset1, markerName);
+                if (currentSuggestionIndex == 0) {
+                    currentSuggestionIndex = currentSuggestions.length - 1;
+                }
+                else currentSuggestionIndex -= 1;
+                appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id)
             });
-        // action when next button is clicked
+        //action when next button is clicked
         document
             .querySelector("#nextbtn")
             .addEventListener("click", function () {
-                const marker = document.getElementById(markerName);
                 marker.innerHTML = "";
-                appendImagetoMarker(asset2, markerName);
+                if (currentSuggestionIndex == currentSuggestions.length - 1) {
+                    currentSuggestionIndex = 0;
+                }
+                else currentSuggestionIndex += 1;
+                appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id)
             });
         document
             .querySelector("#commentbtn")
             .addEventListener("click", function () {
+                var forwardToID = document.querySelector("a-marker > a-image").id;
                 //TODO grap current asset id
-                alert('Forward to comment site');
+                alert('Forward to suggestion overview with ID ' + forwardToID);
             });
     });
 
     //listener for marker event
     sceneEl.addEventListener("markerLost", (e) => {
         isMarkerVisible = false;
+        currentSuggestions = [];
+        currentSuggestionIndex = 0;
         console.log("marker lost");
         [].forEach.call(document.querySelectorAll('.surroundtop, .surroundbottom'), function (el) {
             el.style.visibility = 'hidden';
@@ -55,7 +68,8 @@ $(document).ready((e) => {
 
     //rotate object when touched with one finger
     sceneEl.addEventListener('onefingermove', (e) => {
-        el = document.querySelector('a-image');
+        console.log("onefingermove");
+        el = document.querySelector('a-marker > a-image');
         // control if marker is in fov
         if (isMarkerVisible) {
             el.object3D.rotation.y +=
@@ -69,104 +83,54 @@ $(document).ready((e) => {
     //zoom in/out when touched with two fingers
     sceneEl.addEventListener('twofingermove', (e) => {
         console.log("twofingermove");
-        el = document.querySelector('a-image');
+        el = document.querySelector('a-marker > a-image');
         if (isMarkerVisible) {
             this.scaleFactor *=
                 1 + e.detail.spreadChange / e.detail.startSpread;
         }
     })
-
-    appendMarkerToScene('ifgi-marker', 'pattern/ifgi-pattern.patt');
-    appendImagetoMarker(asset1, 'ifgi-marker');
 })
 
 
-// ++++++ ASSET FUNCTIONS +++++
-function getAllAssets() {
-    $.ajax({
-        url: "https://giv-project10:3001/asset",
-        type: 'GET',
-        dataType: 'json', // added data type
-        success: function (res) {
-            for (let index = 0; index < res.data.length; index++) {
-                console.log(res.data[index]);
-                appendObjectToScene(res.data[index]);
-            }
-        }
-    });
-}
+// ++++++ FUNCTIONS +++++
 
-function getAssetById(ID) {
+/**
+ * @param  {} markerID 
+ */
+function getMarkerSuggestions(markerID) {
+    console.log('Marker: ' + markerID);
     $.ajax({
-        url: "https://giv-project10:3001/asset/" + ID,
+        url: 'http://correnslab.de/api/marker/' + markerID + '/suggestion',
         type: 'GET',
         dataType: 'json',
-        success: function (res) {
-            console.log(res);
-        },
-        error: function (err) {
-            console.log(err);
+        success: function (data) {
+            currentSuggestions = data.data;
+            appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
         }
     });
 }
 
-// ++++++ MARKER FUNCTIONS +++++
-function getAllMarkers() {
-    $.ajax({
-        url: "https://giv-project10:3001/marker",
-        type: 'GET',
-        dataType: 'json',
-        success: function (res) {
-            console.log(res);
-            // for (let index = 0; index < res.data.length; index++) {
-            //     console.log(res.data[index]);
-            // }
-        }
-    });
-}
-
-function getMarkerById(ID) {
-    $.ajax({
-        url: "https://giv-project10:3001/marker/" + ID,
-        type: 'GET',
-        dataType: 'json', // added data type
-        success: function (res) {
-            console.log(res);
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
-}
-
-
-// +++++++ ADD ELEMENTS TO SCENE +++++++++
-//function that adds a marker to the scene
-function appendMarkerToScene(id, url, position) {
-    const scene = document.querySelector('a-scene');
-    var marker = document.createElement('a-marker');
-
-    marker.setAttribute('type', 'pattern');
-    marker.setAttribute('preset', 'custom');
-    marker.setAttribute('url', url);
-    marker.setAttribute('id', id);
-    scene.appendChild(marker);
-}
-
-function appendImagetoMarker(image, markerID) {
+/**
+ * @param  {String} filepath path to the actual image file
+ * @param  {Integer} markerID marker to display the image on
+ * @param  {Integer} suggestionID suggestion ID to forward to comment page
+ */
+function appendImagetoMarker(filepath, markerID, suggestionID) {
     // get marker to append image
     const marker = document.getElementById(markerID);
+    marker.innerHTML = "";
     //generate new image object and set path
     var entity = document.createElement('a-image');
     var imagesrc = document.createAttribute('src');
-    imagesrc.value = image.filepath;
+    imagesrc.value = filepath;
+    imagesrc.value = "/img/uploads/asset1.jpg"; // DELETE LATER
     entity.setAttributeNode(imagesrc);
     //set rotation of image
     var rotationAttr = document.createAttribute('rotation');
     rotationAttr.value = "90 0 180";
     entity.setAttributeNode(rotationAttr);
     //set id
-    entity.setAttribute('id', image.name);
+    entity.setAttribute('id', suggestionID);
     //set position
     var positionAttr = document.createAttribute('position');
     positionAttr.value = "0 0 0";
@@ -181,28 +145,4 @@ function appendImagetoMarker(image, markerID) {
     marker.appendChild(entity);
 
     console.log(entity);
-}
-
-var suggestion1 = {
-    "name": "test1",
-    "marker": "ifgi-marker",
-    "asset_id": 1
-}
-
-var suggestion2 = {
-    "name": "test2",
-    "marker": "ifgi-marker",
-    "asset_id": 2
-}
-
-var asset1 = {
-    "id": 1,
-    "name": "xyz",
-    "filepath": "/img/uploads/asset1.jpg"
-}
-
-var asset2 = {
-    "id": 2,
-    "name": "xyz",
-    "filepath": "/img/uploads/asset2.jpg"
 }
