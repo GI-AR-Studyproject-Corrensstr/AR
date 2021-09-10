@@ -7,7 +7,6 @@ const app = express()
 const PORT = 4200
 
 app.use('/fontawesome', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free/'))
-app.use('/three-module', express.static(__dirname + '/node_modules/three/build/three.module.js'))
 app.use('/aframe', express.static(__dirname + '/node_modules/aframe/dist/'))
 app.use('/aframe', express.static(__dirname + '/node_modules/aframe/dist/'))
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'))
@@ -18,8 +17,8 @@ app.use('/js', express.static(__dirname + '/public/js'))
 app.use('/css', express.static(__dirname + '/public/css'))
 app.use('/img', express.static(__dirname + '/public/img'))
 
-app.get('/view', function (req, res) {
-    res.sendFile(__dirname + '/public/html/view.html')
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/index.html')
 })
 
 https.createServer({

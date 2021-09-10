@@ -1,6 +1,5 @@
-var sceneEl;
-var camera;
-var el;
+var sceneEl; //scene element
+var camera; //camera element
 var rotationFactor = 5;
 var currentSuggestionIndex = 0;
 var currentSuggestions;
@@ -50,7 +49,7 @@ $(document).ready((e) => {
             .querySelector("#commentbtn")
             .addEventListener("click", function () {
                 var forwardToID = document.querySelector("a-marker > a-image").id;
-                //TODO grap current asset id
+                //TODO grab current asset id
                 alert('Forward to suggestion overview with ID ' + forwardToID);
             });
     });
@@ -93,18 +92,19 @@ $(document).ready((e) => {
 
 
 // ++++++ FUNCTIONS +++++
-
 /**
  * @param  {} markerID 
  */
 function getMarkerSuggestions(markerID) {
     console.log('Marker: ' + markerID);
     $.ajax({
-        url: 'http://correnslab.de/api/marker/' + markerID + '/suggestion',
+        url: 'https://giv-project10.uni-muenster.de:3001/marker/' + markerID + '/suggestion',
         type: 'GET',
         dataType: 'json',
         success: function (data) {
+            console.log(data);
             currentSuggestions = data.data;
+            currentSuggestions.sort(() => Math.random() - 0.5);
             appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
         }
     });
@@ -123,7 +123,7 @@ function appendImagetoMarker(filepath, markerID, suggestionID) {
     var entity = document.createElement('a-image');
     var imagesrc = document.createAttribute('src');
     imagesrc.value = filepath;
-    imagesrc.value = "/img/uploads/asset1.jpg"; // DELETE LATER
+    imagesrc.value = "/img/uploads/vorschlagCorrensLab.png"; // DELETE LATER
     entity.setAttributeNode(imagesrc);
     //set rotation of image
     var rotationAttr = document.createAttribute('rotation');

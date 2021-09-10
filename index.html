@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script src="/node_modules/aframe/dist/aframe-master.js"></script>
+<script src="/public/js/aframe-ar.js"></script>
+<script src="/public/js/gestures.js"></script>
+<link rel="stylesheet" href="/public/css/ar.css">
+
+<body style="margin : 0px; overflow: hidden;">
+  <script src="/public/js/ar.js"></script>
+  <div class="buttonstop">
+    <div class="surroundtop" style="visibility: hidden;">
+      <button id="commentbtn" class="button">
+        <i class="fas fa-comments fa-3x"></i>
+      </button>
+    </div>
+  </div>
+  <div class="buttonsdown">
+    <div class="surroundbottom" style="visibility: hidden;">
+      <button id="prevbtn" class="button">
+        <i class="fas fa-arrow-alt-circle-left fa-3x"></i>
+      </button>
+    </div>
+    <div class="surroundbottom" style="visibility: hidden;">
+      <button id="nextbtn" class="button">
+        <i class="fas fa-arrow-alt-circle-right fa-3x"></i>
+      </button>
+    </div>
+  </div>
+  <a-scene gesture-detector embedded arjs vr-mode-ui="enabled: false">
+    <a-marker type="pattern" preset="custom" url="/pattern/ifgi-pattern.patt" id="1" arjs-anchor="" material=""
+      arjs-hit-testing="">
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+
+</html>
