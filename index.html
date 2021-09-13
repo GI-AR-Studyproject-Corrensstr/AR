@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="/fontawesome/css/all.min.css">
+<script src="jquery/jquery.js"></script>
+<script src="aframe/aframe-master.js"></script>
+<script src="js/aframe-ar.js"></script>
+<script src="js/gestures.js"></script>
+<link rel="stylesheet" href="css/ar.css">
+
+<body style="margin : 0px; overflow: hidden;">
+  <script src="js/ar.js"></script>
+  <div class="buttonstop">
+    <div class="surroundtop" style="visibility: hidden;">
+      <button id="commentbtn" class="button">
+        <i class="fas fa-comments fa-3x"></i>
+      </button>
+    </div>
+  </div>
+  <div class="buttonsdown">
+    <div class="surroundbottom" style="visibility: hidden;">
+      <button id="prevbtn" class="button">
+        <i class="fas fa-arrow-alt-circle-left fa-3x"></i>
+      </button>
+    </div>
+    <div class="surroundbottom" style="visibility: hidden;">
+      <button id="nextbtn" class="button">
+        <i class="fas fa-arrow-alt-circle-right fa-3x"></i>
+      </button>
+    </div>
+  </div>
+  <a-scene gesture-detector embedded arjs vr-mode-ui="enabled: false">
+    <!-- <a-marker type="pattern" preset="custom" url="/pattern/ifgi-pattern.patt" id="1" arjs-anchor="" material=""
+      arjs-hit-testing="">
+    </a-marker> -->
+    <a-marker type="pattern" preset="custom" url="/pattern/pattern-M1.patt" id="1" arjs-anchor="" material=""
+      arjs-hit-testing="">
+    </a-marker>
+    <a-marker type="pattern" preset="custom" url="/pattern/pattern-M2.patt" id="2" arjs-anchor="" material=""
+      arjs-hit-testing="">
+    </a-marker>
+    <a-marker type="pattern" preset="custom" url="/pattern/pattern-M3.patt" id="3" arjs-anchor="" material=""
+      arjs-hit-testing="">
+    </a-marker>
+    <a-marker type="pattern" preset="custom" url="/pattern/pattern-M4.patt" id="4" arjs-anchor="" material=""
+      arjs-hit-testing="">
+    </a-marker>
+    <a-marker type="pattern" preset="custom" url="/pattern/pattern-M5.patt" id="5" arjs-anchor="" material=""
+      arjs-hit-testing="">
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+
+</html>

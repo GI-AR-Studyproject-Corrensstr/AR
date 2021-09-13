@@ -1,15 +1,14 @@
-var sceneEl;
-var camera;
-var el;
+var sceneEl; //scene element
+var camera; //camera element
 var rotationFactor = 5;
+var currentSuggestionIndex = 0;
+var currentSuggestions;
 
 $(document).ready((e) => {
 
     //get camera and scene element
     sceneEl = document.querySelector('a-scene');
     camera = document.querySelector('a-camera');
-
-    //console.log(sceneEl);
 
     //marker not visible at beginning
     let isMarkerVisible = false;
@@ -18,22 +17,58 @@ $(document).ready((e) => {
     sceneEl.addEventListener("markerFound", (e) => {
         isMarkerVisible = true;
         //get marker id
-        let markerName = e.target.attributes.id.nodeValue;
-        console.log("marker found", markerName);
-        console.log(sceneEl);
+        let markerID = e.target.attributes.id.nodeValue;
+        const marker = document.getElementById(markerID);
+        [].forEach.call(document.querySelectorAll('.surroundbottom, .surroundtop'), function (el) {
+            el.style.visibility = 'visible';
+        });
+        getMarkerSuggestions(markerID);
+        // action when prev button is clicked
+        document
+            .querySelector("#prevbtn")
+            .addEventListener("click", function () {
+                marker.innerHTML = "";
+                if (currentSuggestionIndex == 0) {
+                    currentSuggestionIndex = currentSuggestions.length - 1;
+                }
+                else currentSuggestionIndex -= 1;
+                appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id)
+            });
+        //action when next button is clicked
+        document
+            .querySelector("#nextbtn")
+            .addEventListener("click", function () {
+                marker.innerHTML = "";
+                if (currentSuggestionIndex == currentSuggestions.length - 1) {
+                    currentSuggestionIndex = 0;
+                }
+                else currentSuggestionIndex += 1;
+                appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id)
+            });
+        document
+            .querySelector("#commentbtn")
+            .addEventListener("click", function () {
+                var forwardToID = document.querySelector("a-marker > a-image").id;
+                //TODO grab current asset id
+                alert('Forward to suggestion overview with ID ' + forwardToID);
+            });
     });
 
     //listener for marker event
     sceneEl.addEventListener("markerLost", (e) => {
         isMarkerVisible = false;
+        currentSuggestions = [];
+        currentSuggestionIndex = 0;
         console.log("marker lost");
+        [].forEach.call(document.querySelectorAll('.surroundtop, .surroundbottom'), function (el) {
+            el.style.visibility = 'hidden';
+        });
     });
 
     //rotate object when touched with one finger
     sceneEl.addEventListener('onefingermove', (e) => {
-
-        //TODO Dynamisch Elemente suchen
-        el = document.querySelector('a-image');
+        console.log("onefingermove");
+        el = document.querySelector('a-marker > a-image');
         // control if marker is in fov
         if (isMarkerVisible) {
             el.object3D.rotation.y +=
@@ -47,179 +82,67 @@ $(document).ready((e) => {
     //zoom in/out when touched with two fingers
     sceneEl.addEventListener('twofingermove', (e) => {
         console.log("twofingermove");
-        el = document.querySelector('a-image');
+        el = document.querySelector('a-marker > a-image');
         if (isMarkerVisible) {
             this.scaleFactor *=
                 1 + e.detail.spreadChange / e.detail.startSpread;
         }
     })
-
-    appendMarkerToScene('ifgi-marker', 'pattern/ifgi-pattern.patt')
-    getAllAssets();
-    // getAssetById(53);
-    //getAllMarkers();
-    getMarkerById(18)
 })
 
 
-// ++++++ ASSET FUNCTIONS +++++
-function getAllAssets() {
+// ++++++ FUNCTIONS +++++
+/**
+ * @param  {} markerID 
+ */
+function getMarkerSuggestions(markerID) {
+    console.log('Marker: ' + markerID);
     $.ajax({
-        url: "https://giv-project10:3001/asset",
+        url: 'https://giv-project10.uni-muenster.de:3001/marker/' + markerID + '/suggestion',
         type: 'GET',
-        dataType: 'json', // added data type
-        success: function (res) {
-            for (let index = 0; index < res.data.length; index++) {
-                console.log(res.data[index]);
-                appendObjectToScene(res.data[index]);
-            }
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+            currentSuggestions = data.data;
+            currentSuggestions.sort(() => Math.random() - 0.5);
+            appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
         }
     });
 }
 
-function getAssetById(ID) {
-    $.ajax({
-        url: "https://giv-project10:3001/asset/" + ID,
-        type: 'GET',
-        dataType: 'json', // added data type
-        success: function (res) {
-            console.log(res);
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
-}
+/**
+ * @param  {String} filepath path to the actual image file
+ * @param  {Integer} markerID marker to display the image on
+ * @param  {Integer} suggestionID suggestion ID to forward to comment page
+ */
+function appendImagetoMarker(filepath, markerID, suggestionID) {
+    // get marker to append image
+    const marker = document.getElementById(markerID);
+    marker.innerHTML = "";
+    //generate new image object and set path
+    var entity = document.createElement('a-image');
+    var imagesrc = document.createAttribute('src');
+    imagesrc.value = filepath;
+    imagesrc.value = "/img/uploads/vorschlagCorrensLab.png"; // DELETE LATER
+    entity.setAttributeNode(imagesrc);
+    //set rotation of image
+    var rotationAttr = document.createAttribute('rotation');
+    rotationAttr.value = "90 0 180";
+    entity.setAttributeNode(rotationAttr);
+    //set id
+    entity.setAttribute('id', suggestionID);
+    //set position
+    var positionAttr = document.createAttribute('position');
+    positionAttr.value = "0 0 0";
+    entity.setAttributeNode(positionAttr);
+    // activate gesture-handler
+    var gesturehandler = document.createAttribute('gesture-handler');
+    entity.setAttributeNode(gesturehandler);
+    //set scale
+    var scaleAttr = document.createAttribute('scale');
+    scaleAttr.value = "1 1 1";
+    entity.setAttributeNode(scaleAttr);
+    marker.appendChild(entity);
 
-// ++++++ MARKER FUNCTIONS +++++
-function getAllMarkers() {
-    $.ajax({
-        url: "https://giv-project10:3001/marker",
-        type: 'GET',
-        dataType: 'json', // added data type
-        success: function (res) {
-            console.log(res);
-            // for (let index = 0; index < res.data.length; index++) {
-            //     console.log(res.data[index]);
-            // }
-        }
-    });
-}
-
-function getMarkerById(ID) {
-    $.ajax({
-        url: "https://giv-project10:3001/marker/" + ID,
-        type: 'GET',
-        dataType: 'json', // added data type
-        success: function (res) {
-            console.log(res);
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
-}
-
-
-// TODO
-function getCloseAssets(markerID) {
-
-}
-
-
-// +++++++ ADD ELEMENTS TO SCENE +++++++++
-//function that adds a marker to the scene
-function appendMarkerToScene(id, url, position) {
-    const scene = document.querySelector('a-scene');
-    var marker = document.createElement('a-marker');
-
-    marker.setAttribute('type', 'pattern');
-    marker.setAttribute('preset', 'custom');
-    marker.setAttribute('url', url);
-    marker.setAttribute('id', id);
-    scene.appendChild(marker);
-}
-
-
-
-// function that adds an oject to the scene
-function appendObjectToScene(object) {
-    // get marker for object
-    const marker = document.getElementById("ifgi-marker");
-    var entity;
-    switch (object.type) {
-        case "3D_asset":
-            //generate new gltf object and set path
-            entity = document.createElement('a-gltf-model');
-            var gltfmodel = document.createAttribute('gltf-model');
-            gltfmodel.value = "/gltf/default_objects/tree_small.glb";
-            entity.setAttributeNode(gltfmodel);
-
-            //set id
-            entity.setAttribute('id', object.name);
-            //set position
-            var positionAttr = document.createAttribute('position');
-            positionAttr.value = "0 1 0";
-            entity.setAttributeNode(positionAttr);
-            // activate gesture-handler
-            var gesturehandler = document.createAttribute('gesture-handler');
-            entity.setAttributeNode(gesturehandler);
-            //set scale
-            var scaleAttr = document.createAttribute('scale');
-            scaleAttr.value = "1 1 1";
-            entity.setAttributeNode(scaleAttr);
-
-            console.log(entity);
-            marker.appendChild(entity);
-            break;
-        case "image":
-            //generate new image object and set path
-            entity = document.createElement('a-image');
-            var imagesrc = document.createAttribute('src');
-            imagesrc.value = "/img/gartenlaube.jpg";
-            entity.setAttributeNode(imagesrc);
-            //set rotation of image
-            var rotationAttr = document.createAttribute('rotation');
-            rotationAttr.value = "90 0 180";
-            entity.setAttributeNode(rotationAttr);
-
-            //set id
-            entity.setAttribute('id', object.name);
-            //set position
-            var positionAttr = document.createAttribute('position');
-            positionAttr.value = "1 1 0";
-            entity.setAttributeNode(positionAttr);
-            // activate gesture-handler
-            var gesturehandler = document.createAttribute('gesture-handler');
-            entity.setAttributeNode(gesturehandler);
-            //set scale
-            var scaleAttr = document.createAttribute('scale');
-            scaleAttr.value = "1 1 1";
-            entity.setAttributeNode(scaleAttr);
-
-            console.log(entity);
-            marker.appendChild(entity);
-            break;
-    }
-}
-
-//example marker1
-var marker1 = {
-    "name": "Mustermarker",
-    "path": "/kdfjh/jdfhxb.patt",
-    "position": "X Y Z"
-}
-//example object1
-var object1 = {
-    type: "gltf",
-    name: "element",
-    position: "0 0 0",
-    marker: "markerId"
-}
-
-var template = {
-    name: String,
-    type: String,
-    position: String,
-    path: String
+    console.log(entity);
 }
