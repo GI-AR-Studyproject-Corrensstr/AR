@@ -2,7 +2,8 @@ var sceneEl; //scene element
 var camera; //camera element
 var rotationFactor = 5;
 var currentSuggestionIndex = 0;
-var currentSuggestions;
+var currentSuggestions; // latest list of suggestions from @currentMarkerID
+var currentMarkerID; // latest recognizes marker
 
 $(document).ready((e) => {
 
@@ -18,7 +19,7 @@ $(document).ready((e) => {
         isMarkerVisible = true;
         //get marker id
         let markerID = e.target.attributes.id.nodeValue;
-        const marker = document.getElementById(markerID);
+        var marker = document.getElementById(markerID);
         [].forEach.call(document.querySelectorAll('.surroundbottom, .surroundtop'), function (el) {
             el.style.visibility = 'visible';
         });
@@ -57,9 +58,8 @@ $(document).ready((e) => {
     //listener for marker event
     sceneEl.addEventListener("markerLost", (e) => {
         isMarkerVisible = false;
-        currentSuggestions = [];
+        //currentSuggestions = [];
         currentSuggestionIndex = 0;
-        console.log("marker lost");
         [].forEach.call(document.querySelectorAll('.surroundtop, .surroundbottom'), function (el) {
             el.style.visibility = 'hidden';
         });
@@ -97,17 +97,23 @@ $(document).ready((e) => {
  */
 function getMarkerSuggestions(markerID) {
     console.log('Marker: ' + markerID);
-    $.ajax({
-        url: 'https://giv-project10.uni-muenster.de:3001/marker/' + markerID + '/suggestion',
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            console.log(data);
-            currentSuggestions = data.data;
-            currentSuggestions.sort(() => Math.random() - 0.5);
-            appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
-        }
-    });
+    if (markerID == currentMarkerID) {
+        appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
+    }
+    else {
+        $.ajax({
+            url: 'https://giv-project10.uni-muenster.de:3001/marker/' + markerID + '/suggestion',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                currentSuggestions = [];
+                currentSuggestions = data.data;
+                currentSuggestions.sort(() => Math.random() - 0.5);
+                appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
+            }
+        });
+        currentMarkerID = markerID;
+    }
 }
 
 /**
@@ -116,6 +122,7 @@ function getMarkerSuggestions(markerID) {
  * @param  {Integer} suggestionID suggestion ID to forward to comment page
  */
 function appendImagetoMarker(filepath, markerID, suggestionID) {
+    console.log("Appending Suggestion with ID: " + suggestionID + " and Filepath: " + filepath + " to Marker with ID: " + markerID);
     // get marker to append image
     const marker = document.getElementById(markerID);
     marker.innerHTML = "";
