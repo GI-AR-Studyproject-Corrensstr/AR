@@ -2,8 +2,7 @@ var sceneEl; //scene element
 var camera; //camera element
 var rotationFactor = 5;
 var currentSuggestionIndex = 0;
-var currentSuggestions; // latest list of suggestions from @currentMarkerID
-var currentMarkerID; // latest recognizes marker
+var currentSuggestions;
 
 $(document).ready((e) => {
 
@@ -13,14 +12,31 @@ $(document).ready((e) => {
 
     //marker not visible at beginning
     let isMarkerVisible = false;
-
+    //redirect on home button
+    document
+        .querySelector("#homebtn")
+        .addEventListener("click", function () {
+            window.location.href = "https://correnslab.de";
+        });
+    //alert help
+    document
+        .querySelector("#helpbtn")
+        .addEventListener("click", function () {
+            swal({
+                title: "Augmented Reality Partizipation",
+                text: 'Scannen Sie einen der “AR”-Marker auf der Corrensstraße und lassen Sie sich so Vorschläge in der realen Welt anzeigen. ' +
+                    'Die Objekte können Sie drehen und mit den klassischen Zoom-Gesten vergrößern bzw. verkleinern.\n' +
+                    'Wenn ein Marker erkannt wurde, können Sie mit den unteren Pfeilen die Vorschläge wechseln.',
+                icon: "info",
+            });
+        });
     // listener for marker event
     sceneEl.addEventListener("markerFound", (e) => {
         isMarkerVisible = true;
         //get marker id
         let markerID = e.target.attributes.id.nodeValue;
-        var marker = document.getElementById(markerID);
-        [].forEach.call(document.querySelectorAll('.surroundbottom, .surroundtop'), function (el) {
+        const marker = document.getElementById(markerID);
+        [].forEach.call(document.querySelectorAll('#nextbtn, #prevbtn'), function (el) {
             el.style.visibility = 'visible';
         });
         getMarkerSuggestions(markerID);
@@ -46,21 +62,14 @@ $(document).ready((e) => {
                 else currentSuggestionIndex += 1;
                 appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id)
             });
-        document
-            .querySelector("#commentbtn")
-            .addEventListener("click", function () {
-                var forwardToID = document.querySelector("a-marker > a-image").id;
-                //TODO grab current asset id
-                alert('Forward to suggestion overview with ID ' + forwardToID);
-            });
     });
 
     //listener for marker event
     sceneEl.addEventListener("markerLost", (e) => {
         isMarkerVisible = false;
-        //currentSuggestions = [];
+        currentSuggestions = [];
         currentSuggestionIndex = 0;
-        [].forEach.call(document.querySelectorAll('.surroundtop, .surroundbottom'), function (el) {
+        [].forEach.call(document.querySelectorAll('#nextbtn, #prevbtn'), function (el) {
             el.style.visibility = 'hidden';
         });
     });
@@ -84,36 +93,31 @@ $(document).ready((e) => {
         console.log("twofingermove");
         el = document.querySelector('a-marker > a-image');
         if (isMarkerVisible) {
-            this.scaleFactor *=
+            el.object3D.scale.x *=
+                1 + e.detail.spreadChange / e.detail.startSpread;
+            el.object3D.scale.y *=
+                1 + e.detail.spreadChange / e.detail.startSpread;
+            el.object3D.scale.z *=
                 1 + e.detail.spreadChange / e.detail.startSpread;
         }
     })
 })
-
 
 // ++++++ FUNCTIONS +++++
 /**
  * @param  {} markerID 
  */
 function getMarkerSuggestions(markerID) {
-    console.log('Marker: ' + markerID);
-    if (markerID == currentMarkerID) {
-        appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
-    }
-    else {
-        $.ajax({
-            url: 'https://giv-project10.uni-muenster.de:3001/marker/' + markerID + '/suggestion',
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                currentSuggestions = [];
-                currentSuggestions = data.data;
-                currentSuggestions.sort(() => Math.random() - 0.5);
-                appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
-            }
-        });
-        currentMarkerID = markerID;
-    }
+    $.ajax({
+        url: 'https://giv-project10.uni-muenster.de/api/marker/' + markerID + '/suggestion',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            currentSuggestions = data.data;
+            currentSuggestions.sort(() => Math.random() - 0.5);
+            appendImagetoMarker(currentSuggestions[currentSuggestionIndex].asset.file_path, markerID, currentSuggestions[currentSuggestionIndex].id);
+        }
+    });
 }
 
 /**
@@ -122,15 +126,16 @@ function getMarkerSuggestions(markerID) {
  * @param  {Integer} suggestionID suggestion ID to forward to comment page
  */
 function appendImagetoMarker(filepath, markerID, suggestionID) {
-    console.log("Appending Suggestion with ID: " + suggestionID + " and Filepath: " + filepath + " to Marker with ID: " + markerID);
+    console.log("Marker: " + markerID + " with Suggestion: " + suggestionID);
     // get marker to append image
     const marker = document.getElementById(markerID);
     marker.innerHTML = "";
     //generate new image object and set path
     var entity = document.createElement('a-image');
     var imagesrc = document.createAttribute('src');
+    filepath = "/public/storage/" + filepath.split('public/')[1];
     imagesrc.value = filepath;
-    imagesrc.value = "/img/uploads/vorschlagCorrensLab.png"; // DELETE LATER
+    //alert(filepath);
     entity.setAttributeNode(imagesrc);
     //set rotation of image
     var rotationAttr = document.createAttribute('rotation');
@@ -150,6 +155,4 @@ function appendImagetoMarker(filepath, markerID, suggestionID) {
     scaleAttr.value = "1 1 1";
     entity.setAttributeNode(scaleAttr);
     marker.appendChild(entity);
-
-    console.log(entity);
 }

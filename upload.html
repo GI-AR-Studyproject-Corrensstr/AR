@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://kit.fontawesome.com/7885398dba.js" crossorigin="anonymous"></script>
+    <script src="js/upload.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Asset</title>
+</head>
+
+<body>
+    <div class="container">
+        <form>
+            <div class="field">
+                <label class="label">Name</label>
+                <div class="control">
+                    <input id="name" class="input" type="text" placeholder="z.B. Gartenhaus">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Beschreibung</label>
+                <div class="control">
+                    <input id="desc" class="input" type="text" placeholder="hier eine kurze Beschreibung einfügen">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Standort auswählen</label>
+                <div class="control has-icons-left">
+                    <div class="select is-medium is-rounded">
+                        <select id="markerDropdown">
+                            <option selected id="marker1" value="1">Marker 1</option>
+                            <option id="marker2" value="2">Marker 2</option>
+                            <option id="marker3" value="3">Marker 3</option>
+                            <option id="marker4" value="4">Marker 4</option>
+                        </select>
+                    </div>
+                    <span class="icon is-medium is-left">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Bild auswählen</label>
+                <div class="file is-medium is-boxed">
+                    <label class="file-label">
+                        <input id="file" class="file-input" type="file">
+                        <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <input class="button is-primary" type="button" value="Submit" onclick="submitForm()">
+        </form>
+    </div>
+
+</body>
+
+</html>
